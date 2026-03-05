@@ -1,0 +1,533 @@
+/* src/components/sections/VirtualCardSection.css */
+
+.virtual-card-page {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: fadeIn 0.5s ease;
+}
+
+/* Page Header */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.page-title {
+  font-size: 2rem;
+  color: #1a237e;
+  font-weight: 700;
+  position: relative;
+}
+
+.page-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #3f51b5, #1a237e);
+  border-radius: 2px;
+}
+
+/* Card Actions */
+.card-actions {
+  display: flex;
+  gap: 15px;
+}
+
+.btn-download, .btn-print {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn-download {
+  background: linear-gradient(135deg, #3f51b5, #1a237e);
+  color: white;
+}
+
+.btn-print {
+  background: linear-gradient(135deg, #4caf50, #2e7d32);
+  color: white;
+}
+
+.btn-download:hover, .btn-print:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.btn-download:active, .btn-print:active {
+  transform: translateY(0);
+}
+
+/* Card Showcase */
+.card-showcase {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 40px 0;
+  perspective: 1500px;
+}
+
+/* Credit Card Container */
+.credit-card {
+  width: 400px;
+  height: 240px;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.5s ease;
+}
+
+.credit-card:hover {
+  transform: translateY(-10px) rotateY(5deg);
+}
+
+/* Card Inner */
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+/* Card Front */
+.card-front {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 20px;
+  color: white;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Card Background Pattern */
+.card-bg-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 30% 50%, rgba(255,255,255,0.1) 0%, transparent 25%),
+    radial-gradient(circle at 70% 80%, rgba(255,255,255,0.1) 0%, transparent 25%),
+    linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Card Header */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  z-index: 2;
+}
+
+/* Card Chip */
+.card-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.chip-lines {
+  width: 45px;
+  height: 35px;
+  background: linear-gradient(135deg, #ffd700, #ffb347);
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 2px 10px rgba(255, 215, 0, 0.5);
+}
+
+.chip-lines::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 25px;
+  height: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.chip-lines::after {
+  content: '';
+  position: absolute;
+  top: 30%;
+  left: 20%;
+  width: 60%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.chip-circle {
+  width: 15px;
+  height: 15px;
+  border: 2px solid #ffd700;
+  border-radius: 50%;
+}
+
+/* Card Type */
+.card-type {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+}
+
+.card-type i {
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.9);
+  transform: rotate(90deg);
+}
+
+.card-type span {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 8px;
+  border-radius: 20px;
+}
+
+/* Card Number */
+.card-number-container {
+  position: relative;
+  z-index: 2;
+  margin: 15px 0;
+}
+
+.card-number-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  font-family: 'Courier New', monospace;
+}
+
+.card-digits {
+  font-size: 1.3rem;
+  letter-spacing: 3px;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+/* Card Details Row */
+.card-details-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 15px;
+}
+
+.card-holder, .card-expiry {
+  text-align: left;
+}
+
+.card-holder .label, .card-expiry .label {
+  display: block;
+  font-size: 0.7rem;
+  opacity: 0.8;
+  letter-spacing: 1px;
+  margin-bottom: 3px;
+}
+
+.card-holder .value, .card-expiry .value {
+  font-size: 1rem;
+  font-weight: 600;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Card Footer */
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.card-logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-style: italic;
+}
+
+.card-logo span {
+  font-weight: 300;
+  font-size: 0.9rem;
+  margin-left: 5px;
+  opacity: 0.8;
+}
+
+.card-network {
+  display: flex;
+  gap: 10px;
+  font-size: 1.8rem;
+  opacity: 0.7;
+}
+
+.card-network i {
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.3));
+}
+
+/* Card Glow Effect */
+.card-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 50%, rgba(255,255,255,0.4) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.credit-card:hover .card-glow {
+  opacity: 1;
+}
+
+/* Card Shine Effect */
+.card-shine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.8s ease;
+  pointer-events: none;
+}
+
+.credit-card:hover .card-shine {
+  transform: translateX(100%);
+}
+
+/* Details Panel */
+.details-panel {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  margin-top: 30px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.panel-title {
+  font-size: 1.5rem;
+  color: #1a237e;
+  margin-bottom: 25px;
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.panel-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, #3f51b5, #1a237e);
+  border-radius: 2px;
+}
+
+/* Details Grid */
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.detail-item {
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.3s ease;
+  border: 1px solid #e0e0e0;
+}
+
+.detail-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  border-color: #3f51b5;
+}
+
+.detail-label {
+  font-size: 0.9rem;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.detail-label i {
+  color: #3f51b5;
+  font-size: 1rem;
+}
+
+.detail-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a237e;
+  padding-left: 24px;
+}
+
+/* Premium Badge */
+.premium-badge {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+/* Security Note */
+.security-note {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+  border-radius: 12px;
+  margin-top: 20px;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+
+.security-note i {
+  font-size: 1.8rem;
+}
+
+.security-note span {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cardGlow {
+  0% { box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+  50% { box-shadow: 0 30px 60px rgba(102,126,234,0.4); }
+  100% { box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+}
+
+.credit-card {
+  animation: cardGlow 3s ease-in-out infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .card-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .credit-card {
+    width: 320px;
+    height: 200px;
+  }
+  
+  .card-digits {
+    font-size: 1rem;
+  }
+  
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .security-note {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .credit-card {
+    width: 280px;
+    height: 170px;
+  }
+  
+  .card-number-group {
+    gap: 5px;
+  }
+  
+  .card-digits {
+    font-size: 0.9rem;
+    padding: 3px 5px;
+  }
+  
+  .card-holder .value, .card-expiry .value {
+    font-size: 0.9rem;
+  }
+  
+  .btn-download, .btn-print {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .card-actions,
+  .security-note {
+    display: none;
+  }
+  
+  .credit-card {
+    box-shadow: none;
+    border: 2px solid #000;
+  }
+  
+  .details-panel {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+}

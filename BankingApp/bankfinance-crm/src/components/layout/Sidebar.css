@@ -1,0 +1,102 @@
+/* src/components/layout/Sidebar.css */
+.sidebar {
+  width: 260px;
+  background-color: var(--sidebar-bg);
+  box-shadow: 2px 0 20px var(--shadow-color);
+  padding: 20px 0;
+  position: sticky;
+  top: 70px;
+  height: calc(100vh - 70px);
+  overflow-y: auto;
+  transition: all 0.3s ease;
+  animation: slideInLeft 0.5s ease;
+  z-index: 999;
+}
+
+.sidebar.collapsed { width: 70px; }
+.sidebar.collapsed .nav-link span { display: none; }
+.sidebar.collapsed .nav-link { justify-content: center; padding: 12px 0; }
+.sidebar.collapsed .nav-link i { font-size: 1.3rem; margin: 0; }
+
+.sidebar-toggle {
+  padding: 10px 20px;
+  text-align: right;
+  cursor: pointer;
+  color: var(--text-light);
+}
+
+.sidebar.collapsed .sidebar-toggle { text-align: center; padding: 10px 0; }
+.sidebar.collapsed .sidebar-toggle i { transform: rotate(180deg); }
+
+.nav-menu { list-style: none; }
+.nav-item { margin-bottom: 5px; }
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 20px;
+  color: var(--text-dark);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent;
+  font-size: 0.95rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--accent-color), transparent);
+  opacity: 0.1;
+  transition: width 0.3s ease;
+  z-index: -1;
+}
+
+.nav-link:hover::before { width: 100%; }
+.nav-link:hover, .nav-link.active {
+  background-color: var(--light-color);
+  color: var(--primary-color);
+  border-left-color: var(--accent-color);
+}
+
+.nav-link i {
+  width: 20px;
+  text-align: center;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover i {
+  transform: scale(1.2);
+  color: var(--accent-color);
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-100px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: -280px;
+    top: 70px;
+    width: 250px;
+    height: calc(100vh - 70px);
+    transition: left 0.3s ease;
+    box-shadow: 5px 0 30px rgba(0,0,0,0.2);
+  }
+  
+  .sidebar.mobile-open { left: 0; }
+  .sidebar.collapsed { width: 250px; }
+  .sidebar.collapsed .nav-link span { display: inline; }
+  .sidebar.collapsed .nav-link { justify-content: flex-start; padding: 12px 20px; }
+  .sidebar.collapsed .nav-link i { font-size: 1.1rem; }
+  .sidebar-toggle { display: none; }
+}
