@@ -131,7 +131,7 @@ const EmployeesSection = () => {
           </div>
         )}
         <div className="table-responsive">
-          <table className="data-table">
+          <table className="data-table employees-table">
             <thead>
               <tr>
                 <th>Name</th>

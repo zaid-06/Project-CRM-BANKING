@@ -13,7 +13,15 @@ const DashboardSection = () => {
   const employees = context?.employees || [];
   
   const [recentLeads, setRecentLeads] = useState([]);
-  
+  const [leadStats, setLeadStats] = useState({
+    total: 0,
+    new: 0,
+    contacted: 0,
+    followup: 0,
+    converted: 0,
+    rejected: 0,
+  });
+
   const [stats, setStats] = useState({
     totalLeads: 0,
     totalClients: 0,
@@ -21,6 +29,11 @@ const DashboardSection = () => {
     todayReminders: 0,
     kycPending: 0,
     kycCompleted: 0,
+  });
+  const [monthlyData, setMonthlyData] = useState({
+    months: [],
+    leads: [],
+    conversions: [],
   });
   const [loadingStats, setLoadingStats] = useState(false);
   
@@ -47,9 +60,40 @@ const DashboardSection = () => {
     }
   };
 
+  const loadLeadStats = async () => {
+    try {
+      const data = await apiRequest('/leads/stats');
+      setLeadStats({
+        total: data.total || 0,
+        new: data.new || 0,
+        contacted: data.contacted || 0,
+        followup: data.followup || 0,
+        converted: data.converted || 0,
+        rejected: data.rejected || 0,
+      });
+    } catch (error) {
+      console.error('Failed to load lead stats', error);
+    }
+  };
+
+  const loadMonthlyPerformance = async () => {
+    try {
+      const data = await apiRequest('/dashboard/monthly-performance');
+      setMonthlyData({
+        months: data.months || [],
+        leads: data.leads || [],
+        conversions: data.conversions || [],
+      });
+    } catch (error) {
+      console.error('Failed to load monthly performance', error);
+    }
+  };
+
   useEffect(() => {
     // Initial stats load from backend
     loadStats();
+    loadLeadStats();
+    loadMonthlyPerformance();
     // Load recent leads (max 3) for current user/admin
     const loadRecentLeads = async () => {
       try {
@@ -82,7 +126,7 @@ const DashboardSection = () => {
         chartInstances.current.monthly.destroy();
       }
     };
-  }, [recentLeads]); // Re-run when recentLeads change (for charts only)
+  }, [leadStats, monthlyData]); // Re-run when stats change
 
   const initializeCharts = () => {
     if (!window.Chart) return;
@@ -95,14 +139,14 @@ const DashboardSection = () => {
       chartInstances.current.monthly.destroy();
     }
 
-    // Lead Status Chart
+    // Lead Status Chart - uses aggregated lead stats from backend
     if (leadChartRef.current) {
       const statusCounts = {
-        'New': recentLeads.filter(l => l.status === 'New').length,
-        'Contacted': recentLeads.filter(l => l.status === 'Contacted').length,
-        'Follow-up': recentLeads.filter(l => l.status === 'Follow-up').length,
-        'Converted': recentLeads.filter(l => l.status === 'Converted').length,
-        'Rejected': recentLeads.filter(l => l.status === 'Rejected').length
+        'New': leadStats.new || 0,
+        'Contacted': leadStats.contacted || 0,
+        'Follow-up': leadStats.followup || 0,
+        'Converted': leadStats.converted || 0,
+        'Rejected': leadStats.rejected || 0,
       };
 
       chartInstances.current.leadStatus = new window.Chart(leadChartRef.current, {
@@ -132,16 +176,28 @@ const DashboardSection = () => {
       });
     }
 
-    // Monthly Performance Chart
+    // Monthly Performance Chart (backend data)
     if (monthlyChartRef.current) {
+      const labels = monthlyData.months && monthlyData.months.length
+        ? monthlyData.months
+        : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+
+      const leadsData = monthlyData.leads && monthlyData.leads.length
+        ? monthlyData.leads
+        : [0, 0, 0, 0, 0, 0];
+
+      const conversionsData = monthlyData.conversions && monthlyData.conversions.length
+        ? monthlyData.conversions
+        : [0, 0, 0, 0, 0, 0];
+
       chartInstances.current.monthly = new window.Chart(monthlyChartRef.current, {
         type: 'line',
         data: {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          labels,
           datasets: [
             {
               label: 'Leads',
-              data: [12, 19, 15, 17, 14, 18],
+              data: leadsData,
               borderColor: '#2196f3',
               backgroundColor: 'rgba(33, 150, 243, 0.1)',
               tension: 0.4,
@@ -153,7 +209,7 @@ const DashboardSection = () => {
             },
             {
               label: 'Conversions',
-              data: [8, 12, 10, 13, 9, 14],
+              data: conversionsData,
               borderColor: '#4caf50',
               backgroundColor: 'rgba(76, 175, 80, 0.1)',
               tension: 0.4,
@@ -211,7 +267,11 @@ const DashboardSection = () => {
         <h1 className="page-title">Dashboard</h1>
         <button 
           className="btn btn-primary" 
-          onClick={loadStats}
+          onClick={() => {
+            loadStats();
+            loadLeadStats();
+            loadMonthlyPerformance();
+          }}
           disabled={loadingStats}
         >
           <i className="fas fa-sync-alt"></i> {loadingStats ? 'Refreshing...' : 'Refresh'}

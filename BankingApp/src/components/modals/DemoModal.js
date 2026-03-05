@@ -2,7 +2,7 @@
 import React from 'react';
 import './Modals.css';
 
-const DemoModal = ({ isOpen, onClose }) => {
+const DemoModal = ({ isOpen, onClose, lead }) => {
   if (!isOpen) return null;
 
   const handleDownload = (file) => {
@@ -19,11 +19,21 @@ const DemoModal = ({ isOpen, onClose }) => {
         <div className="modal-body">
           <div className="form-group">
             <label>Client Name</label>
-            <input type="text" className="form-control" value="Rahul Sharma" readOnly />
+            <input
+              type="text"
+              className="form-control"
+              value={lead?.name || 'Rahul Sharma'}
+              readOnly
+            />
           </div>
           <div className="form-group">
             <label>Loan Type</label>
-            <input type="text" className="form-control" value="Home Loan" readOnly />
+            <input
+              type="text"
+              className="form-control"
+              value={lead?.loanType || 'Home Loan'}
+              readOnly
+            />
           </div>
           <div className="form-group">
             <label>Sample Documents</label>

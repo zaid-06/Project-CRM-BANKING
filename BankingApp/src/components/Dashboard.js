@@ -36,6 +36,7 @@ const Dashboard = ({ setIsLoggedIn }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState(null);
+  const [currentTheme, setCurrentTheme] = useState('default');
 
   useEffect(() => {
     const savedUser = localStorage.getItem('bankfinance_user');
@@ -50,6 +51,7 @@ const Dashboard = ({ setIsLoggedIn }) => {
       if (savedTheme !== 'default') {
         document.body.classList.add(`theme-${savedTheme}`);
       }
+      setCurrentTheme(savedTheme);
     }
   }, [setCurrentUser]);
 
@@ -94,6 +96,8 @@ const Dashboard = ({ setIsLoggedIn }) => {
         setIsLoggedIn={setIsLoggedIn}
         mobileOpen={mobileOpen}
         setMobileOpen={setMobileOpen}
+        currentTheme={currentTheme}
+        setCurrentTheme={setCurrentTheme}
         notifications={notifications}
         showAlert={showAlert}
       />

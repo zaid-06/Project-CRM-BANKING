@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useAppContext } from '../../context/AppContext';
 import { apiRequest } from '../../api';
 import LeadModal from '../modals/LeadModal';
+import DemoModal from '../modals/DemoModal';
 import './Sections.css';
 
 const LeadsSection = ({ personal = false }) => {
@@ -12,6 +13,8 @@ const LeadsSection = ({ personal = false }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editingLead, setEditingLead] = useState(null);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [viewLead, setViewLead] = useState(null);
   const [loading, setLoading] = useState(false);
 
   // ✅ Safely access context data
@@ -78,6 +81,11 @@ const LeadsSection = ({ personal = false }) => {
   const handleEditClick = (lead) => {
     setEditingLead(lead);
     setModalOpen(true);
+  };
+
+  const handleViewClick = (lead) => {
+    setViewLead(lead);
+    setViewModalOpen(true);
   };
 
   const handleSaveLead = async (formData) => {
@@ -197,7 +205,10 @@ const LeadsSection = ({ personal = false }) => {
                       </span>
                     </td>
                     <td className="action-buttons">
-                      <button className="action-btn view">
+                      <button
+                        className="action-btn view"
+                        onClick={() => handleViewClick(lead)}
+                      >
                         <i className="fas fa-eye"></i>
                       </button>
                       <button
@@ -233,6 +244,12 @@ const LeadsSection = ({ personal = false }) => {
         onClose={() => { setModalOpen(false); setEditingLead(null); }}
         onSave={handleSaveLead}
         lead={editingLead}
+      />
+
+      <DemoModal
+        isOpen={viewModalOpen}
+        onClose={() => { setViewModalOpen(false); setViewLead(null); }}
+        lead={viewLead}
       />
     </div>
   );

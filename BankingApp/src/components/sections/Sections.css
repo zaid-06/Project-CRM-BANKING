@@ -179,6 +179,11 @@
   color: var(--text-dark);
 }
 
+/* Tighter padding for employees table rows */
+.data-table.employees-table td {
+  padding: 8px 10px;
+}
+
 .data-table tr:hover td {
   background-color: var(--light-color);
   transform: scale(1.01);
@@ -247,6 +252,171 @@
   border-color: var(--accent-color);
   box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.1);
   outline: none;
+}
+
+/* KYC instructions styling */
+.instruction-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.6);
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.instruction-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.instruction-item h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.instruction-item p {
+  margin: 2px 0 0;
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+/* Knowledge Base styling */
+.knowledge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.knowledge-item {
+  background: linear-gradient(135deg, var(--card-bg), var(--light-gray));
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 15px var(--shadow-color);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.knowledge-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px var(--shadow-color);
+}
+
+.knowledge-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: #fff;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+}
+
+.knowledge-title {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  line-height: 1.3;
+}
+
+.knowledge-description {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  color: var(--text-light);
+  line-height: 1.5;
+}
+
+.knowledge-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.knowledge-tag {
+  font-size: 0.8rem;
+  color: var(--accent-color);
+  background: rgba(63, 81, 181, 0.1);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+/* CIBIL Check styling */
+.cibil-meter {
+  position: relative;
+  height: 14px;
+  border-radius: 999px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin: 25px auto 10px;
+  max-width: 420px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+}
+
+.cibil-meter::before {
+  content: '';
+  grid-column: 1 / -1;
+  grid-row: 1;
+  background: linear-gradient(90deg, #f44336, #ff9800, #ffc107, #4caf50);
+}
+
+.cibil-pointer {
+  position: absolute;
+  top: -8px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 10px solid var(--primary-color);
+  transform: translateX(-50%);
+  transition: left 0.3s ease;
+}
+
+.cibil-range {
+  display: flex;
+  justify-content: space-between;
+  max-width: 420px;
+  margin: 0 auto 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-light);
+}
+
+.cibil-score-display {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--primary-color);
+  margin: 10px 0 5px;
+}
+
+.content-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 8px;
+}
+
+.content-card p {
+  color: var(--text-light);
+  font-size: 0.95rem;
 }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
