@@ -2,6 +2,29 @@
 import React, { useState, useEffect } from 'react';
 import './Modals.css';
 
+const normalizeIndianPhone10 = (raw) => {
+  if (!raw) return '';
+
+  let value = String(raw).trim();
+
+  // Remove spaces, hyphens, parentheses, etc. Keep digits and leading +
+  value = value.replace(/[^\d+]/g, '');
+
+  // Strip +91 if provided
+  if (value.startsWith('+91')) value = value.slice(3);
+
+  // Strip leading 0 if provided (e.g. 0987...)
+  if (value.startsWith('0')) value = value.slice(1);
+
+  // Keep digits only
+  value = value.replace(/\D/g, '');
+
+  // If more than 10 digits (e.g. user pasted country code), keep last 10
+  if (value.length > 10) value = value.slice(-10);
+
+  return value;
+};
+
 const EmployeeModal = ({ isOpen, onClose, onSave, employee }) => {
   const [formData, setFormData] = useState({
     name: '',
@@ -44,7 +67,9 @@ const EmployeeModal = ({ isOpen, onClose, onSave, employee }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.phone) {
+    const phone10 = normalizeIndianPhone10(formData.phone);
+
+    if (!formData.name || !formData.email || !phone10) {
       alert('Please fill all required fields');
       return;
     }
@@ -55,7 +80,12 @@ const EmployeeModal = ({ isOpen, onClose, onSave, employee }) => {
       return;
     }
 
-    const payload = { ...formData };
+    if (phone10.length !== 10) {
+      alert('Please enter a valid 10 digit mobile number');
+      return;
+    }
+
+    const payload = { ...formData, phone: phone10 };
     if (employee) {
       // On edit, omit empty password so backend doesn't change it
       if (!payload.password) {

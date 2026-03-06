@@ -32,7 +32,6 @@ coverage/
 .DS_Store
 Thumbs.db
 
-# Cursor / tooling
-.cursor/
+
 
 

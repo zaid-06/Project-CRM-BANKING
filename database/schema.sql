@@ -2,8 +2,8 @@
 CREATE DATABASE IF NOT EXISTS bankfinance_crm;
 USE bankfinance_crm;
 
--- Users table
-CREATE TABLE IF NOT EXISTS Users (
+-- Users table (lowercase to match Sequelize tableName: "users")
+CREATE TABLE IF NOT EXISTS users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
@@ -15,11 +15,13 @@ CREATE TABLE IF NOT EXISTS Users (
     status ENUM('active', 'inactive') DEFAULT 'active',
     lastLogin DATETIME,
     refreshToken TEXT,
+    otp VARCHAR(6),
+    otpExpires DATETIME,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Leads table
+-- Leads table (Sequelize default "Leads")
 CREATE TABLE IF NOT EXISTS Leads (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
@@ -34,30 +36,31 @@ CREATE TABLE IF NOT EXISTS Leads (
     createdBy INT,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (assignedTo) REFERENCES Users(id) ON DELETE SET NULL,
-    FOREIGN KEY (createdBy) REFERENCES Users(id) ON DELETE SET NULL
+    FOREIGN KEY (assignedTo) REFERENCES users(id) ON DELETE SET NULL,
+    FOREIGN KEY (createdBy) REFERENCES users(id) ON DELETE SET NULL
 );
 
--- Clients table
-CREATE TABLE IF NOT EXISTS Clients (
+-- Clients table (Sequelize tableName: "clients")
+-- Uses slug enums for loanType and lowercase status to match Client model
+CREATE TABLE IF NOT EXISTS clients (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
     phone VARCHAR(20) NOT NULL,
     email VARCHAR(100) NOT NULL,
-    loanType ENUM('Home Loan', 'Personal Loan', 'Business Loan', 'Car Loan', 'Gold Loan') DEFAULT 'Personal Loan',
+    loanType ENUM('home_loan', 'personal_loan', 'business_loan', 'car_loan', 'gold_loan') DEFAULT 'personal_loan',
     amount DECIMAL(15,2) DEFAULT 500000,
-    status ENUM('Active', 'Inactive', 'Pending') DEFAULT 'Active',
+    status ENUM('active', 'inactive', 'pending') DEFAULT 'active',
     address TEXT,
     panNumber VARCHAR(20),
     aadharNumber VARCHAR(20),
     assignedTo INT,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (assignedTo) REFERENCES Users(id) ON DELETE SET NULL
+    FOREIGN KEY (assignedTo) REFERENCES users(id) ON DELETE SET NULL
 );
 
--- Employees table
-CREATE TABLE IF NOT EXISTS Employees (
+-- Employees table (Sequelize tableName: "employees")
+CREATE TABLE IF NOT EXISTS employees (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
     role VARCHAR(50) NOT NULL,
@@ -70,10 +73,10 @@ CREATE TABLE IF NOT EXISTS Employees (
     managerId INT,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (managerId) REFERENCES Employees(id) ON DELETE SET NULL
+    FOREIGN KEY (managerId) REFERENCES employees(id) ON DELETE SET NULL
 );
 
--- Reminders table
+-- Reminders table (Sequelize default "Reminders")
 CREATE TABLE IF NOT EXISTS Reminders (
     id INT PRIMARY KEY AUTO_INCREMENT,
     client VARCHAR(100) NOT NULL,
@@ -84,7 +87,7 @@ CREATE TABLE IF NOT EXISTS Reminders (
     userId INT,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (userId) REFERENCES Users(id) ON DELETE CASCADE
+    FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- Knowledge Base table
@@ -98,11 +101,11 @@ CREATE TABLE IF NOT EXISTS KnowledgeBases (
     createdBy INT,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (createdBy) REFERENCES Users(id) ON DELETE SET NULL
+    FOREIGN KEY (createdBy) REFERENCES users(id) ON DELETE SET NULL
 );
 
--- Commission table
-CREATE TABLE IF NOT EXISTS Commissions (
+-- Commission table (Sequelize tableName: "commissions")
+CREATE TABLE IF NOT EXISTS commissions (
     id INT PRIMARY KEY AUTO_INCREMENT,
     product VARCHAR(100) NOT NULL,
     rate DECIMAL(5,2) NOT NULL,
@@ -113,8 +116,8 @@ CREATE TABLE IF NOT EXISTS Commissions (
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- KYC table
-CREATE TABLE IF NOT EXISTS KYCs (
+-- KYC table (Sequelize tableName: "kyc")
+CREATE TABLE IF NOT EXISTS kyc (
     id INT PRIMARY KEY AUTO_INCREMENT,
     userId INT UNIQUE,
     status ENUM('pending', 'in-progress', 'completed', 'rejected') DEFAULT 'pending',
@@ -129,11 +132,11 @@ CREATE TABLE IF NOT EXISTS KYCs (
     completedAt DATETIME,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (userId) REFERENCES Users(id) ON DELETE CASCADE
+    FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- CIBIL table
-CREATE TABLE IF NOT EXISTS CIBILs (
+-- CIBIL table (Sequelize tableName: "cibil")
+CREATE TABLE IF NOT EXISTS cibil (
     id INT PRIMARY KEY AUTO_INCREMENT,
     userId INT,
     score INT NOT NULL,
@@ -146,11 +149,11 @@ CREATE TABLE IF NOT EXISTS CIBILs (
     inquiries INT,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (userId) REFERENCES Users(id) ON DELETE CASCADE
+    FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Issues table
-CREATE TABLE IF NOT EXISTS Issues (
+-- Issues table (Sequelize tableName: "issues")
+CREATE TABLE IF NOT EXISTS issues (
     id INT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(200) NOT NULL,
     description TEXT NOT NULL,
@@ -162,30 +165,16 @@ CREATE TABLE IF NOT EXISTS Issues (
     resolution TEXT,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (createdBy) REFERENCES Users(id) ON DELETE CASCADE,
-    FOREIGN KEY (assignedTo) REFERENCES Users(id) ON DELETE SET NULL
+    FOREIGN KEY (createdBy) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (assignedTo) REFERENCES users(id) ON DELETE SET NULL
 );
 
--- Insert sample data
-INSERT INTO Users (name, email, password, role, avatar) VALUES
-('Admin User', 'admin@bankfinance.com', '$2a$10$YourHashedPasswordHere', 'admin', 'A'),
-('Rajesh Kumar', 'manager@bankfinance.com', '$2a$10$YourHashedPasswordHere', 'manager', 'R'),
-('Pooja Desai', 'staff@bankfinance.com', '$2a$10$YourHashedPasswordHere', 'staff', 'P'),
-('Mumbai Franchise', 'franchise@bankfinance.com', '$2a$10$YourHashedPasswordHere', 'franchise', 'M');
-
-INSERT INTO Employees (name, role, department, email) VALUES
+-- Insert sample data (no users/clients - backend bootstraps admin; clients will be created via app)
+INSERT INTO employees (name, role, department, email) VALUES
 ('Rajesh Kumar', 'Loan Officer', 'Sales', 'rajesh@bankfinance.com'),
 ('Pooja Desai', 'Loan Officer', 'Sales', 'pooja@bankfinance.com');
 
-INSERT INTO Leads (name, phone, email, loanType, amount, status, followup) VALUES
-('Rahul Sharma', '+91 9876543210', 'rahul@email.com', 'Home Loan', 3500000, 'New', '2024-01-15'),
-('Priya Patel', '+91 8765432109', 'priya@email.com', 'Personal Loan', 500000, 'Contacted', '2024-01-18'),
-('Amit Kumar', '+91 7654321098', 'amit@email.com', 'Car Loan', 850000, 'Follow-up', '2024-01-12');
-
-INSERT INTO Clients (name, phone, email, loanType, amount, status) VALUES
-('Sneha Gupta', '+91 6543210987', 'sneha@email.com', 'Business Loan', 2500000, 'Active');
-
-INSERT INTO Commissions (product, rate, minAmount, maxAmount) VALUES
+INSERT INTO commissions (product, rate, minAmount, maxAmount) VALUES
 ('Home Loan', 0.8, 1000000, 10000000),
 ('Personal Loan', 1.5, 50000, 2500000),
 ('Business Loan', 1.2, 500000, 5000000),

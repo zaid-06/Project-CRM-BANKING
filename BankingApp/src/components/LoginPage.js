@@ -8,12 +8,35 @@ const LoginPage = ({ setIsLoggedIn }) => {
   const { setCurrentUser, showAlert } = useAppContext();
 
   const [activeTab, setActiveTab] = useState('password');
-  const [email, setEmail] = useState('admin@bankfinance.com');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [userType, setUserType] = useState('admin');
-  const [phone, setPhone] = useState('+91 9876543210');
+  const [phone, setPhone] = useState('9334079149');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [loading, setLoading] = useState(false);
+
+  const normalizeIndianPhone10 = (raw) => {
+    if (!raw) return '';
+
+    let value = String(raw).trim();
+
+    // Remove spaces, hyphens, parentheses, etc. Keep digits and leading +
+    value = value.replace(/[^\d+]/g, '');
+
+    // Strip +91 if provided
+    if (value.startsWith('+91')) value = value.slice(3);
+
+    // Strip leading 0 if provided (e.g. 0987...)
+    if (value.startsWith('0')) value = value.slice(1);
+
+    // Keep digits only
+    value = value.replace(/\D/g, '');
+
+    // If more than 10 digits (e.g. user pasted country code), keep last 10
+    if (value.length > 10) value = value.slice(-10);
+
+    return value;
+  };
 
   const getUserNameByType = (type) => {
     switch(type) {
@@ -90,23 +113,25 @@ const LoginPage = ({ setIsLoggedIn }) => {
 
   const handleSendOTP = async () => {
     try {
-      if (!phone) {
+      const phone10 = normalizeIndianPhone10(phone);
+
+      if (!phone10) {
         if (showAlert) showAlert('Please enter phone number', 'error');
         return;
       }
 
+      if (phone10.length !== 10) {
+        if (showAlert) showAlert('Please enter a valid 10 digit mobile number', 'error');
+        return;
+      }
+
       setLoading(true);
-      const data = await apiRequest('/auth/login-phone', {
+      await apiRequest('/auth/login-phone', {
         method: 'POST',
-        body: JSON.stringify({ phone }),
+        body: JSON.stringify({ phone: phone10 }),
       });
 
-      if (data?.otp) {
-        // Demo mode: show OTP directly for testing
-        if (showAlert) showAlert(`Your OTP is: ${data.otp}`, 'success');
-      } else if (showAlert) {
-        showAlert('OTP sent successfully.', 'success');
-      }
+      if (showAlert) showAlert('OTP sent successfully.', 'success');
     } catch (error) {
       if (showAlert) showAlert(error.message || 'Failed to send OTP', 'error');
     } finally {
@@ -123,10 +148,16 @@ const LoginPage = ({ setIsLoggedIn }) => {
     try {
       setLoading(true);
       const otpCode = otp.join('');
+      const phone10 = normalizeIndianPhone10(phone);
+
+      if (!phone10 || phone10.length !== 10) {
+        if (showAlert) showAlert('Please enter a valid 10 digit mobile number', 'error');
+        return;
+      }
 
       const data = await apiRequest('/auth/verify-otp-phone', {
         method: 'POST',
-        body: JSON.stringify({ phone, otp: otpCode }),
+        body: JSON.stringify({ phone: phone10, otp: otpCode }),
       });
 
       const userData = {

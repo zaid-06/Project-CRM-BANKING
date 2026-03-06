@@ -26,6 +26,9 @@ const ensureClientFromLead = async (lead, userId) => {
 
   const loanTypeEnum = mapLoanTypeToClientEnum(lead.loanType);
 
+  // Prefer the staff who owns the lead as client owner
+  const ownerId = lead.assignedTo || lead.createdBy || userId;
+
   const [client, created] = await Client.findOrCreate({
     where: { email: lead.email },
     defaults: {
@@ -35,7 +38,7 @@ const ensureClientFromLead = async (lead, userId) => {
       loanType: loanTypeEnum,
       amount: lead.amount,
       status: "active",
-      assignedTo: userId,
+      assignedTo: ownerId,
     },
   });
 
@@ -46,6 +49,7 @@ const ensureClientFromLead = async (lead, userId) => {
       loanType: loanTypeEnum,
       amount: lead.amount,
       status: "active",
+      assignedTo: ownerId,
     });
   }
 };

@@ -59,8 +59,8 @@ const login = async (req, res) => {
 
     let user = await User.findOne({ where: { email } });
 
-    // Bootstrap default admin if not found and using default admin credentials
-    const defaultAdminEmail = process.env.INIT_ADMIN_EMAIL || "admin@bankfinance.com";
+    // Bootstrap default admin if not found and using default admin credentials (first-time run, empty user table)
+    const defaultAdminEmail = process.env.INIT_ADMIN_EMAIL || "admin08@gmail.com";
     const defaultAdminPassword = process.env.INIT_ADMIN_PASSWORD || "admin123";
 
     if (
@@ -70,10 +70,10 @@ const login = async (req, res) => {
       userType === "admin"
     ) {
       user = await User.create({
-        name: process.env.INIT_ADMIN_NAME || "Admin User",
+        name: process.env.INIT_ADMIN_NAME || "Admin",
         email: defaultAdminEmail,
         password: defaultAdminPassword,
-        phone: process.env.INIT_ADMIN_PHONE || null,
+        phone: process.env.INIT_ADMIN_PHONE || "9334079149",
         role: "admin",
         department: "Admin",
         status: "active",
@@ -89,7 +89,18 @@ const login = async (req, res) => {
     if (user.status !== "active")
       return res.status(401).json({ message: "Account is inactive" });
 
-    const isPasswordValid = await user.validatePassword(password);
+    let isPasswordValid = await user.validatePassword(password);
+    // Fix placeholder password from old schema seed (so login works without deleting DB volume)
+    if (!isPasswordValid && user.email === defaultAdminEmail && password === defaultAdminPassword) {
+      const isPlaceholder =
+        user.password === "$2a$10$YourHashedPasswordHere" ||
+        (user.password && String(user.password).includes("YourHashedPasswordHere"));
+      if (isPlaceholder) {
+        user.password = defaultAdminPassword;
+        await user.save();
+        isPasswordValid = true;
+      }
+    }
     if (!isPasswordValid)
       return res.status(401).json({ message: "Invalid credentials" });
 
@@ -207,27 +218,20 @@ const loginWithPhone = async (req, res) => {
     }
 
     const otp = await user.generateOTP();
-    const useRealSms = process.env.USE_REAL_SMS === "true";
 
-    if (useRealSms) {
-      try {
-        await sendOtpSms(phone, otp);
-      } catch (smsError) {
-        console.error("Send OTP SMS Error:", smsError.message);
-        // For demo, still allow login by exposing OTP in response
-        return res.json({
-          message: "OTP (SMS failed, using demo mode)",
-          otp,
-        });
-      }
-      return res.json({ message: "OTP sent successfully" });
+    try {
+      await sendOtpSms(phone, otp);
+    } catch (smsError) {
+      console.error("Send OTP SMS Error:", smsError.message);
+      const isConfigMissing = (smsError.message || "").toLowerCase().includes("configuration") || (smsError.message || "").toLowerCase().includes("missing");
+      const status = isConfigMissing ? 503 : 502;
+      const message = isConfigMissing
+        ? "SMS service is not configured. Please set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_FROM_NUMBER in server environment."
+        : (smsError.message || "Failed to send OTP. Please try again.");
+      return res.status(status).json({ message });
     }
 
-    // Demo mode: do not call any external SMS provider, just return OTP
-    return res.json({
-      message: "OTP generated (demo mode)",
-      otp,
-    });
+    return res.json({ message: "OTP sent successfully" });
 
   } catch (error) {
     console.error("Login with phone Error:", error.message);

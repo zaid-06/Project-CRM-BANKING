@@ -33,6 +33,7 @@ const User = sequelize.define(
     phone: {
       type: DataTypes.STRING(20),
       allowNull: true,
+      unique: true,
     },
 
     role: {

@@ -1,5 +1,7 @@
 const { validationResult } = require("express-validator");
+const { Op } = require("sequelize");
 const Client = require("../models/Client");
+const Lead = require("../models/Lead");
 
 
 // ================= CREATE CLIENT =================
@@ -34,13 +36,82 @@ const createClient = async (req, res) => {
 
 
 
+// Helper to map lead loanType to client loanType enum
+const mapLoanTypeToClientEnum = (loanType) => {
+  switch (loanType) {
+    case "Home Loan":
+      return "home_loan";
+    case "Personal Loan":
+      return "personal_loan";
+    case "Business Loan":
+      return "business_loan";
+    case "Car Loan":
+      return "car_loan";
+    case "Gold Loan":
+      return "gold_loan";
+    default:
+      return "personal_loan";
+  }
+};
+
 // ================= GET ALL CLIENTS =================
 const getAllClients = async (req, res) => {
   try {
-    const whereClause =
-      req.user.role === "admin"
-        ? {}
-        : { assignedTo: req.user.id };
+    let whereClause = {};
+
+    if (req.user.role !== "admin") {
+      // Base filter: clients explicitly assigned to this user
+      const orConditions = [{ assignedTo: req.user.id }];
+
+      // Also ensure that for each of this user's converted leads we have a matching client.
+      const convertedLeads = await Lead.findAll({
+        where: {
+          status: "Converted",
+          [Op.or]: [
+            { createdBy: req.user.id },
+            { assignedTo: req.user.id },
+          ],
+        },
+      });
+
+      for (const lead of convertedLeads) {
+        if (!lead.email) continue;
+
+        const ownerId = lead.assignedTo || lead.createdBy || req.user.id;
+        const loanTypeEnum = mapLoanTypeToClientEnum(lead.loanType);
+
+        const [client, created] = await Client.findOrCreate({
+          where: { email: lead.email },
+          defaults: {
+            name: lead.name,
+            email: lead.email,
+            phone: lead.phone,
+            loanType: loanTypeEnum,
+            amount: lead.amount,
+            status: "active",
+            assignedTo: ownerId,
+          },
+        });
+
+        if (!created) {
+          await client.update({
+            name: lead.name,
+            phone: lead.phone,
+            loanType: loanTypeEnum,
+            amount: lead.amount,
+            status: "active",
+            assignedTo: ownerId,
+          });
+        }
+      }
+
+      // After ensuring/updating clients, build final filter for this user
+      whereClause = {
+        [Op.or]: [
+          { assignedTo: req.user.id },
+        ],
+      };
+    }
 
     const clients = await Client.findAll({
       where: whereClause,
