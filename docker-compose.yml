@@ -1,82 +1,50 @@
-version: "3.9"
-
 services:
   db:
     image: mysql:8.0
-    restart: always
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: bankfinance_crm
       MYSQL_USER: crm_user
       MYSQL_PASSWORD: crm_pass
-    # Use 3307 on host to avoid conflict with local MySQL on 3306
-    # ports:
-    #   - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
-      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
-    # healthcheck:
-    #   test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p", "rootpassword"]
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 10
-    #   start_period: 30s
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
-    # restart: unless-stopped
-    restart: always
-    depends_on:
-      - db
+    container_name: bankfinance-backend
+    env_file:
+      - ./backend/.env
     environment:
-      NODE_ENV: development
-      PORT: 5000
+      # Ensure DB_HOST/DB_PORT in .env are correct; these override if set
       DB_HOST: db
       DB_PORT: 3306
-      DB_NAME: bankfinance_crm
-      DB_USER: crm_user
-      DB_PASSWORD: crm_pass
-      FRONTEND_URL: http://localhost:3000
-      JWT_SECRET: supersecretjwt
-      JWT_REFRESH_SECRET: superrefreshsecret
-      AUTH_USE_OTP: "false"
-      USE_REAL_SMS: "false"
-      INIT_ADMIN_EMAIL: "admin08@gmail.com"
-      INIT_ADMIN_PASSWORD: "admin123"
-      INIT_ADMIN_NAME: "Admin"
-      INIT_ADMIN_PHONE: "9334079149"
-    # depends_on:
-    #   - db
-      # db:
-      #   condition: service_healthy
-    command: npm run dev
+    depends_on:
+      db:
+        condition: service_healthy
     ports:
       - "5000:5000"
-    volumes:
-      - ./backend:/usr/src/app
-      - /usr/src/app/node_modules
+    restart: unless-stopped
 
   frontend:
     build:
       context: ./BankingApp
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    environment:
-      CHOKIDAR_USEPOLLING: "true"
-      WATCHPACK_POLLING: "true"
-      BROWSER: "none"
-      REACT_APP_API_BASE_URL: http://localhost:5000/api
-    command: npm start
+      args:
+        # Must be defined in your environment or .env (root)
+        REACT_APP_API_BASE_URL: ${REACT_APP_API_BASE_URL}
+    container_name: bankfinance-frontend
+    ports:
+      - "80:80"
     depends_on:
       - backend
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./BankingApp:/usr/src/app
-      - /usr/src/app/node_modules
+    restart: unless-stopped
 
 volumes:
   db_data:
-

@@ -1,3 +1,10 @@
+node_modules
+npm-debug.log
+Dockerfile*
+.dockerignore
+.git
+.gitignore
+build
 # Dependencies (reinstalled in container)
 node_modules/
 npm-debug.log*
