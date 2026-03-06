@@ -35,13 +35,26 @@ const sequelize = new Sequelize(
 
 // 🔹 Function to connect DB manually (Better Practice)
 const connectDB = async () => {
+  console.log("DB_HOST:", process.env.DB_HOST)
+  console.log("DB_PORT:", process.env.DB_PORT)
+  console.log("DB_NAME:", process.env.DB_NAME)
+  console.log("DB_USER:", process.env.DB_USER)
+  console.log("DB_PASSWORD:", process.env.DB_PASSWORD)
+
+  let retries = 10;
+  while (retries) {
   try {
     await sequelize.authenticate();
     console.log("✅ Database connection established successfully.");
+    return;
   } catch (error) {
     console.error("❌ Database connection failed:", error.message);
-    process.exit(1);
+    // process.exit(1);
+    retries--;
+    await new Promise(r => setTimeout(r, 5000));
   }
+
+}
 };
 
 module.exports = {

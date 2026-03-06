@@ -3,30 +3,33 @@ version: "3.9"
 services:
   db:
     image: mysql:8.0
-    restart: unless-stopped
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: bankfinance_crm
       MYSQL_USER: crm_user
       MYSQL_PASSWORD: crm_pass
     # Use 3307 on host to avoid conflict with local MySQL on 3306
-    ports:
-      - "3307:3306"
+    # ports:
+    #   - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
       - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
+    # healthcheck:
+    #   test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p", "rootpassword"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 10
+    #   start_period: 30s
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    restart: unless-stopped
+    # restart: unless-stopped
+    restart: always
+    depends_on:
+      - db
     environment:
       NODE_ENV: development
       PORT: 5000
@@ -44,9 +47,10 @@ services:
       INIT_ADMIN_PASSWORD: "admin123"
       INIT_ADMIN_NAME: "Admin"
       INIT_ADMIN_PHONE: "9334079149"
-    depends_on:
-      db:
-        condition: service_healthy
+    # depends_on:
+    #   - db
+      # db:
+      #   condition: service_healthy
     command: npm run dev
     ports:
       - "5000:5000"
