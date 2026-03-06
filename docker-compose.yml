@@ -38,7 +38,7 @@ services:
       context: ./BankingApp
       args:
         # Must be defined in your environment or .env (root)
-        REACT_APP_API_BASE_URL: ${REACT_APP_API_BASE_URL}
+        REACT_APP_API_BASE_URL: http://localhost:5000/api
     container_name: bankfinance-frontend
     ports:
       - "80:80"
