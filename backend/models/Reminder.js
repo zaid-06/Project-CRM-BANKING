@@ -30,7 +30,7 @@ const Reminder = sequelize.define('Reminder', {
   userId: {
     type: DataTypes.INTEGER,
     references: {
-      model: 'Users',
+      model: 'users',
       key: 'id'
     }
   }

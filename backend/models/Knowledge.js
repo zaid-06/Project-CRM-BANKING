@@ -30,7 +30,7 @@ const KnowledgeBase = sequelize.define('KnowledgeBase', {
   createdBy: {
     type: DataTypes.INTEGER,
     references: {
-      model: 'Users',
+      model: 'users',
       key: 'id'
     }
   }

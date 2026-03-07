@@ -45,14 +45,14 @@ const Lead = sequelize.define('Lead', {
   assignedTo: {
     type: DataTypes.INTEGER,
     references: {
-      model: 'Users',
+      model: 'users',
       key: 'id'
     }
   },
   createdBy: {
     type: DataTypes.INTEGER,
     references: {
-      model: 'Users',
+      model: 'users',
       key: 'id'
     }
   }

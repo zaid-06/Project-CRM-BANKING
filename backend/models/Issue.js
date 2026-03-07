@@ -34,7 +34,7 @@ const Issue = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
-        model: "Users",
+        model: "users",
         key: "id",
       },
       onDelete: "SET NULL",

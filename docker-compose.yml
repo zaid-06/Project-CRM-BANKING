@@ -23,9 +23,11 @@ services:
     env_file:
       - ./backend/.env
     environment:
-      # Ensure DB_HOST/DB_PORT in .env are correct; these override if set
       DB_HOST: db
       DB_PORT: 3306
+      DB_USER: crm_user
+      DB_PASSWORD: crm_pass
+      DB_NAME: bankfinance_crm
     depends_on:
       db:
         condition: service_healthy
@@ -37,7 +39,6 @@ services:
     build:
       context: ./BankingApp
       args:
-        # Must be defined in your environment or .env (root)
         REACT_APP_API_BASE_URL: http://localhost:5000/api
     container_name: bankfinance-frontend
     ports:
