@@ -10,6 +10,16 @@ const logActivity = require("../utils/activityLogger");
 const { sendOtpSms } = require("../utils/smsService");
 
 
+const normalizeIndianPhone10 = (raw) => {
+  if (!raw) return null;
+  let value = String(raw).trim().replace(/[^\d+]/g, "");
+  if (value.startsWith("+91")) value = value.slice(3);
+  if (value.startsWith("0")) value = value.slice(1);
+  value = value.replace(/\D/g, "");
+  if (value.length > 10) value = value.slice(-10);
+  return value || null;
+};
+
 // ================= REGISTER =================
 const register = async (req, res) => {
   try {
@@ -19,16 +29,23 @@ const register = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
 
     const { name, email, password, phone, role, department } = req.body;
+    const normalizedPhone = normalizeIndianPhone10(phone);
 
     const userExists = await User.findOne({ where: { email } });
     if (userExists)
       return res.status(400).json({ message: "User already exists" });
 
+    if (normalizedPhone) {
+      const phoneExists = await User.findOne({ where: { phone: normalizedPhone } });
+      if (phoneExists)
+        return res.status(400).json({ message: "Mobile number is already used" });
+    }
+
     const user = await User.create({
       name,
       email,
       password,
-      phone,
+      phone: normalizedPhone,
       role: role || "staff",
       department,
     });

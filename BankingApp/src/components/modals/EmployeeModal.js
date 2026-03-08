@@ -28,7 +28,7 @@ const normalizeIndianPhone10 = (raw) => {
 const EmployeeModal = ({ isOpen, onClose, onSave, employee }) => {
   const [formData, setFormData] = useState({
     name: '',
-    role: '',
+    role: 'staff',
     department: '',
     email: '',
     phone: '',
@@ -51,7 +51,7 @@ const EmployeeModal = ({ isOpen, onClose, onSave, employee }) => {
     } else {
       setFormData({
         name: '',
-        role: '',
+        role: 'staff',
         department: '',
         email: '',
         phone: '',
@@ -127,15 +127,18 @@ const EmployeeModal = ({ isOpen, onClose, onSave, employee }) => {
             <div className="form-row">
               <div className="form-group">
                 <label>Role *</label>
-                <input
-                  type="text"
-                  name="role"
+                <select
                   className="form-control"
+                  name="role"
                   value={formData.role}
                   onChange={handleChange}
-                  placeholder="e.g., Loan Officer"
                   required
-                />
+                >
+                  <option value="admin">Admin</option>
+                  <option value="manager">Manager</option>
+                  <option value="staff">Staff</option>
+                  <option value="franchise">Franchise</option>
+                </select>
               </div>
               <div className="form-group">
                 <label>Department *</label>

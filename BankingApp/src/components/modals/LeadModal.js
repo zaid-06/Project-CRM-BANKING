@@ -134,4 +134,4 @@ const LeadModal = ({ isOpen, onClose, onSave, lead }) => {
   );
 };
 
-export default LeadModal;
+export default LeadModal; 

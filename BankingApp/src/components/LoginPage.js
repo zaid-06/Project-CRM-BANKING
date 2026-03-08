@@ -4,7 +4,7 @@ import './LoginPage.css';
 import { useAppContext } from '../context/AppContext';
 import { apiRequest } from '../api';
 
-const LoginPage = ({ setIsLoggedIn }) => {
+const LoginPage = ({ setIsLoggedIn, onGoToRegister }) => {
   const { setCurrentUser, showAlert } = useAppContext();
 
   const [activeTab, setActiveTab] = useState('password');
@@ -328,6 +328,18 @@ const LoginPage = ({ setIsLoggedIn }) => {
               </button>
             </div>
           )}
+
+          <div style={{ textAlign: 'center', marginTop: '20px' }}>
+            Don't have an account?{' '}
+            <button
+              type="button"
+              className="btn-link"
+              onClick={onGoToRegister}
+              style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', textDecoration: 'underline', padding: 0, font: 'inherit' }}
+            >
+              Register
+            </button>
+          </div>
         </div>
       </div>
     </div>

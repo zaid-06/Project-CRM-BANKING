@@ -1,0 +1,174 @@
+.register-container{
+display:flex;
+height:100vh;
+font-family:Arial, Helvetica, sans-serif;
+}
+
+/* LEFT SIDE */
+
+.register-left{
+flex:1;
+background:#0d1b4c;
+color:white;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:40px;
+}
+
+.brand-box h1{
+font-size:38px;
+margin-bottom:10px;
+}
+
+.brand-box p{
+opacity:0.9;
+margin-bottom:30px;
+}
+
+.badge-container span{
+display:inline-block;
+background:rgba(255,255,255,0.15);
+padding:8px 14px;
+margin:5px;
+border-radius:20px;
+font-size:14px;
+}
+
+/* RIGHT SIDE */
+
+.register-right{
+flex:1;
+display:flex;
+align-items:center;
+justify-content:center;
+background:#f5f6fa;
+padding:20px;
+}
+
+.register-box{
+width:380px;
+background:white;
+padding:40px;
+border-radius:10px;
+box-shadow:0 5px 25px rgba(0,0,0,0.1);
+}
+
+.register-box h2{
+margin-bottom:20px;
+text-align:center;
+}
+
+.register-box form{
+display:flex;
+flex-direction:column;
+}
+
+.register-box input{
+padding:14px;
+margin-bottom:15px;
+border:1px solid #ddd;
+border-radius:6px;
+font-size:15px;
+}
+
+.register-box button{
+padding:14px;
+background:#1d2c8b;
+color:white;
+border:none;
+border-radius:6px;
+font-size:16px;
+cursor:pointer;
+}
+
+.register-box button:hover{
+background:#111d6b;
+}
+
+.login-link{
+text-align:center;
+margin-top:15px;
+font-size:14px;
+}
+
+
+/* -------------------- */
+/* TABLET RESPONSIVE */
+/* -------------------- */
+
+@media (max-width: 900px){
+
+.register-container{
+flex-direction:column;
+height:auto;
+}
+
+.register-left{
+padding:30px;
+text-align:center;
+}
+
+.brand-box h1{
+font-size:30px;
+}
+
+.register-right{
+padding:30px 15px;
+}
+
+.register-box{
+width:100%;
+max-width:420px;
+}
+
+}
+
+
+/* -------------------- */
+/* MOBILE RESPONSIVE */
+/* -------------------- */
+
+@media (max-width: 480px){
+
+.register-left{
+padding:25px 20px;
+}
+
+.brand-box h1{
+font-size:26px;
+}
+
+.brand-box p{
+font-size:14px;
+}
+
+.badge-container span{
+font-size:12px;
+padding:6px 10px;
+}
+
+.register-right{
+padding:20px;
+}
+
+.register-box{
+padding:25px;
+border-radius:8px;
+}
+
+.register-box input{
+font-size:14px;
+padding:12px;
+}
+
+.register-box button{
+font-size:15px;
+padding:12px;
+}
+
+.login-link{
+font-size:13px;
+}
+
+}
